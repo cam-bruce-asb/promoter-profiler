@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft } from 'lucide-react'
+import { ReanalyzeAudioButton } from '@/components/ReanalyzeAudioButton'
 
 interface CandidateDetailProps {
   params: Promise<{ id: string }>
@@ -93,18 +94,24 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
       <main className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="space-y-6">
           {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold text-stone-900 mb-2">
-              {candidate.full_name}
-            </h1>
-            <p className="text-stone-600">
-              Submitted on {new Date(candidate.created_at).toLocaleDateString('en-ZA', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-stone-900 mb-2">
+                {candidate.full_name}
+              </h1>
+              <p className="text-stone-600">
+                Submitted on {new Date(candidate.created_at).toLocaleDateString('en-ZA', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            </div>
+            <ReanalyzeAudioButton 
+              candidateId={candidate.id} 
+              hasAudioUrls={!!candidate.audio_urls}
+            />
           </div>
 
           {/* AI Analysis Summary */}
@@ -112,7 +119,7 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
             <Card className="border-2 border-stone-300">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>AI Analysis</span>
+                  <span>AI Analysis {analysis.audio_tone_analysis ? '(Including Voice Analysis)' : ''}</span>
                   <div className="flex items-center gap-3">
                     <Badge
                       variant="outline"
@@ -209,6 +216,66 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
                     </ul>
                   </div>
                 )}
+
+                {/* Voice & Tone Analysis */}
+                {analysis.audio_tone_analysis && analysis.audio_tone_analysis.length > 0 && (
+                  <div className="border-t pt-6">
+                    <h3 className="font-semibold text-lg mb-4 flex items-center">
+                      <span className="mr-2">🎤</span>
+                      Voice & Tone Analysis
+                    </h3>
+                    
+                    {/* Overall Voice Summary */}
+                    <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+                      <h4 className="font-semibold text-blue-900 mb-3">AI Commentary on Vocal Delivery</h4>
+                      <div className="space-y-3">
+                        {analysis.audio_tone_analysis.map((toneAnalysis: any, index: number) => (
+                          <div key={index} className="text-sm">
+                            <span className="font-medium text-blue-800">Q{toneAnalysis.questionNumber}:</span>
+                            <span className="text-blue-900 ml-2">{toneAnalysis.insights}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Detailed Metrics */}
+                    <div className="space-y-4">
+                      {analysis.audio_tone_analysis.map((toneAnalysis: any, index: number) => (
+                        <details key={index} className="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                          <summary className="font-medium cursor-pointer hover:text-stone-600">
+                            Question {toneAnalysis.questionNumber} - Detailed Voice Metrics
+                          </summary>
+                          <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div className="p-2 bg-white rounded border border-stone-200">
+                              <span className="text-xs text-stone-600">Confidence:</span>
+                              <p className="font-medium capitalize text-lg">{toneAnalysis.confidence}</p>
+                            </div>
+                            <div className="p-2 bg-white rounded border border-stone-200">
+                              <span className="text-xs text-stone-600">Enthusiasm:</span>
+                              <p className="font-medium capitalize text-lg">{toneAnalysis.enthusiasm}</p>
+                            </div>
+                            <div className="p-2 bg-white rounded border border-stone-200">
+                              <span className="text-xs text-stone-600">Speech Pace:</span>
+                              <p className="font-medium capitalize text-lg">{toneAnalysis.speechPace}</p>
+                            </div>
+                            <div className="p-2 bg-white rounded border border-stone-200">
+                              <span className="text-xs text-stone-600">Clarity:</span>
+                              <p className="font-medium capitalize text-lg">{toneAnalysis.clarity}</p>
+                            </div>
+                            <div className="p-2 bg-white rounded border border-stone-200">
+                              <span className="text-xs text-stone-600">Naturalness:</span>
+                              <p className="font-medium capitalize text-lg">{toneAnalysis.naturalness.replace('-', ' ')}</p>
+                            </div>
+                            <div className="p-2 bg-white rounded border border-stone-200">
+                              <span className="text-xs text-stone-600">Tone:</span>
+                              <p className="font-medium capitalize text-sm">{toneAnalysis.tone.join(', ')}</p>
+                            </div>
+                          </div>
+                        </details>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -271,16 +338,34 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {questions.map((question, index) => (
-                <div key={question.key} className="border-b border-stone-200 pb-4 last:border-0">
-                  <h4 className="font-medium text-stone-900 mb-2">
-                    {index + 1}. {question.text}
-                  </h4>
-                  <p className="text-stone-700 whitespace-pre-wrap">
-                    {responses[question.key] || 'No response'}
-                  </p>
-                </div>
-              ))}
+              {questions.map((question, index) => {
+                const audioUrls = candidate.audio_urls as Record<string, string> | null
+                const audioUrl = audioUrls?.[`question${index + 1}`]
+                
+                return (
+                  <div key={question.key} className="border-b border-stone-200 pb-4 last:border-0">
+                    <h4 className="font-medium text-stone-900 mb-2">
+                      {index + 1}. {question.text}
+                    </h4>
+                    
+                    {/* Audio Player */}
+                    {audioUrl && (
+                      <div className="mb-3 p-3 bg-stone-50 rounded border border-stone-200">
+                        <p className="text-xs text-stone-600 mb-2">🎤 Voice Recording:</p>
+                        <audio controls className="w-full" preload="metadata">
+                          <source src={audioUrl} type="audio/webm" />
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                    )}
+                    
+                    {/* Text Response */}
+                    <p className="text-stone-700 whitespace-pre-wrap">
+                      {responses[question.key] || 'No response'}
+                    </p>
+                  </div>
+                )
+              })}
             </CardContent>
           </Card>
         </div>

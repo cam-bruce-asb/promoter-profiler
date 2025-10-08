@@ -2,6 +2,7 @@
 
 import { createAdminClient } from '@/lib/supabase/server'
 import { analyzeCandidate } from '@/lib/ai-analyzer'
+import { analyzeAudioTone, type AudioToneAnalysis } from './analyze-audio-tone'
 
 export async function submitCandidateForm(formData: FormData) {
   try {
@@ -81,10 +82,9 @@ async function analyzeAndStore(
   responses: any
 ) {
   try {
-    // Run AI analysis
+    // First, do basic text analysis without audio (fast)
     const analysis = await analyzeCandidate(candidateName, responses)
-
-    // Store analysis in database
+    
     const supabase = await createAdminClient()
     
     const { error: analysisError } = await supabase
@@ -106,6 +106,8 @@ async function analyzeAndStore(
     }
 
     console.log(`Successfully analyzed candidate ${candidateId}`)
+    // Audio analysis will be triggered via API route from client
+    
   } catch (error) {
     console.error('Failed to analyze candidate:', error)
     // Don't throw - we don't want to fail the form submission

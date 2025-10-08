@@ -33,12 +33,14 @@ export interface AnalysisResult {
 
 export async function analyzeCandidate(
   candidateName: string,
-  responses: CandidateResponses
+  responses: CandidateResponses,
+  audioAnalyses?: any[] | null
 ): Promise<AnalysisResult> {
   const prompt = `You are evaluating a candidate named ${candidateName} for an in-store promoter position in South Africa.
 
 IMPORTANT EVALUATION CONTEXT:
 - Evaluate for natural sales talent and work ethic, NOT educational sophistication
+- Don't automatically trust what the person says about themselves, rather look for evidence of the traits you are evaluating through a combination of other answers
 - Value authenticity, practical intelligence, and life experience
 - Simple language or grammatical errors should NOT penalize scores if the core message shows promise
 - Look for hustle mentality, street smarts, and natural people skills
@@ -67,6 +69,28 @@ ${responses.question6}
 
 Question 7 - "Why should we choose you for this position?":
 ${responses.question7}
+
+${audioAnalyses && audioAnalyses.length > 0 ? `
+VOICE & TONE ANALYSIS:
+Based on audio recordings, here are insights about the candidate's vocal delivery:
+
+${audioAnalyses.map((analysis: any) => `
+Question ${analysis.questionNumber}:
+- Confidence Level: ${analysis.confidence}
+- Enthusiasm: ${analysis.enthusiasm}
+- Tone Qualities: ${analysis.tone.join(', ')}
+- Speech Pace: ${analysis.speechPace}
+- Clarity: ${analysis.clarity}
+- Naturalness: ${analysis.naturalness}
+- Vocal Insights: ${analysis.insights}
+`).join('\n')}
+
+IMPORTANT: Factor in these vocal characteristics when assessing:
+- Sales Aptitude: High enthusiasm and warm tone indicate natural sales ability
+- Confidence: Voice confidence correlates with self-motivation and reliability
+- Authenticity: Natural, spontaneous delivery suggests genuine responses
+- Communication Skills: Clarity and pace reveal customer-facing suitability
+` : ''}
 
 PROVIDE YOUR ANALYSIS IN THE FOLLOWING JSON FORMAT (respond ONLY with valid JSON, no markdown):
 {

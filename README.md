@@ -4,7 +4,9 @@ A candidate screening application for in-store promoter positions with AI-powere
 
 ## Features
 
-- **Public Form**: Mobile-friendly candidate application form
+- **Multi-Step Voice Form**: Mobile-first wizard interface with voice recording capability
+- **Voice-to-Text**: Automatic transcription using OpenAI Whisper API
+- **Progress Saving**: Candidates can resume their application from where they left off
 - **AI Analysis**: Automatic personality assessment using OpenAI GPT-4o
 - **Admin Dashboard**: Protected dashboard to review all candidates
 - **Detailed Profiles**: View candidate responses and AI-generated insights
@@ -14,8 +16,10 @@ A candidate screening application for in-store promoter positions with AI-powere
 - Next.js 15 (App Router)
 - Supabase (Database & Authentication)
 - OpenAI GPT-4o (AI Analysis)
+- OpenAI Whisper (Voice Transcription)
 - Shadcn/ui (Stone Theme)
 - TailwindCSS
+- Web MediaRecorder API (Voice Recording)
 
 ## Setup Instructions
 
@@ -81,9 +85,31 @@ Visit:
 
 ### For Candidates
 
-1. Visit the homepage
-2. Fill out the application form with personal info and answer 7 questions
-3. Submit and receive confirmation
+The application uses a **9-step wizard format** optimized for mobile devices:
+
+**Step 1**: Basic Information
+- Enter name, email, phone, location, and availability
+- Regular text inputs
+
+**Steps 2-8**: Voice Questions (one question per step)
+- Click "Record Your Answer" to use voice
+- Speak your answer naturally
+- Audio automatically transcribes using OpenAI Whisper
+- Edit the transcribed text if needed
+- Alternatively, type your answer in the text box
+- Progress is automatically saved in your browser
+
+**Step 9**: Review & Submit
+- Review all your answers
+- Edit any response by clicking the "Edit" button
+- Submit your completed application
+
+**Key Features:**
+- Voice recording with auto-transcription
+- Fallback to typing if voice doesn't work
+- Progress saved automatically (can close and resume later)
+- Mobile-friendly interface
+- Works with South African accents
 
 ### For Admins
 
