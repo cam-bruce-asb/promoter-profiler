@@ -50,23 +50,31 @@ export default async function AdminDashboard() {
 
   const candidateList = (candidates || []) as Candidate[]
 
-  return (
-    <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-200">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-stone-900">
-            Candidate Dashboard
-          </h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-stone-600">{user.email}</span>
-            <LogoutButton />
-          </div>
-        </div>
-      </header>
+      return (
+        <div className="min-h-screen bg-gray-50">
+          <header className="bg-white border-b border-gray-200 shadow-sm">
+            <div className="container mx-auto px-6 py-5 flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+                  Candidate Dashboard
+                </h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  Manage and review candidate applications
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                  <p className="text-xs text-gray-500">Administrator</p>
+                </div>
+                <LogoutButton />
+              </div>
+            </div>
+          </header>
 
-      <main className="container mx-auto px-4 py-6 space-y-4">
-        <CandidateTable candidates={candidateList} />
-      </main>
-    </div>
-  )
+          <main className="container mx-auto px-6 py-8">
+            <CandidateTable candidates={candidateList} />
+          </main>
+        </div>
+      )
 }
