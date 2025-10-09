@@ -68,6 +68,7 @@ export function MultiStepForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [showShimmer, setShowShimmer] = useState(false)
 
   const updateField = (field: keyof FormData, value: string | boolean) => {
     setFormData({ ...formData, [field]: value })
@@ -83,6 +84,8 @@ export function MultiStepForm() {
   const nextStep = () => {
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep(currentStep + 1)
+      setShowShimmer(true)
+      setTimeout(() => setShowShimmer(false), 800) // Remove shimmer after animation
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
@@ -334,7 +337,7 @@ export function MultiStepForm() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Question {currentStep - 1}</h2>
-                  <p className="text-lg text-stone-700 leading-relaxed">
+                  <p className={`text-lg text-stone-700 leading-relaxed ${showShimmer ? 'animate-shimmer' : ''}`}>
                     {questions[currentStep - 2]}
                   </p>
                 </div>

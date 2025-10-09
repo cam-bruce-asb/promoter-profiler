@@ -124,7 +124,12 @@ export function VoiceRecorder({ onTranscriptionComplete, onAudioRecorded, onAuto
           recognitionRef.current.stop()
         }
         
-        // Auto-transcribe with Whisper
+        // Auto-advance immediately to next question
+        if (onAutoAdvance) {
+          onAutoAdvance()
+        }
+        
+        // Auto-transcribe with Whisper in the background
         await handleTranscribe(audioBlob)
       }
 
@@ -171,13 +176,6 @@ export function VoiceRecorder({ onTranscriptionComplete, onAudioRecorded, onAuto
       if (result.success && result.text) {
         setTranscribedText(result.text)
         onTranscriptionComplete(result.text)
-        
-        // Auto-advance to next step after successful transcription
-        if (onAutoAdvance) {
-          setTimeout(() => {
-            onAutoAdvance()
-          }, 1500) // Wait 1.5 seconds so user can see the transcription
-        }
       } else {
         setError(result.error || 'Transcription failed')
       }
