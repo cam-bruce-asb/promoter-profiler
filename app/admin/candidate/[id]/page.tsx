@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft } from 'lucide-react'
 import { ReanalyzeAudioButton } from '@/components/ReanalyzeAudioButton'
+import { SyncAudioButton } from '@/components/SyncAudioButton'
 
 interface CandidateDetailProps {
   params: Promise<{ id: string }>
@@ -107,11 +108,25 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
                   day: 'numeric',
                 })}
               </p>
+              {candidate.audio_urls && Object.keys(candidate.audio_urls as object).length > 0 ? (
+                <Badge variant="outline" className="mt-2 bg-green-50 text-green-700 border-green-300">
+                  🎤 {Object.keys(candidate.audio_urls as object).length} Audio Recording{Object.keys(candidate.audio_urls as object).length > 1 ? 's' : ''} Linked
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="mt-2 bg-yellow-50 text-yellow-700 border-yellow-300">
+                  ⚠️ Audio Files Not Linked (Click "Sync & Analyze Audio")
+                </Badge>
+              )}
             </div>
-            <ReanalyzeAudioButton 
-              candidateId={candidate.id} 
-              hasAudioUrls={!!candidate.audio_urls}
-            />
+            <div className="flex gap-2">
+              <SyncAudioButton candidateId={candidate.id} />
+              {candidate.audio_urls && (
+                <ReanalyzeAudioButton 
+                  candidateId={candidate.id} 
+                  hasAudioUrls={!!candidate.audio_urls}
+                />
+              )}
+            </div>
           </div>
 
           {/* AI Analysis Summary */}
@@ -304,10 +319,6 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
                 <div>
                   <label className="text-sm font-medium text-stone-600">Location</label>
                   <p className="text-stone-900">{candidate.location}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-stone-600">Availability</label>
-                  <p className="text-stone-900 capitalize">{candidate.availability.replace('-', ' ')}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-stone-600">Age Verified</label>

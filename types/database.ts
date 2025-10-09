@@ -4,7 +4,6 @@ export interface Candidate {
   email: string
   phone: string
   location: string
-  availability: string
   age_verified: boolean
   product_comfort: string | null
   previous_experience: string | null

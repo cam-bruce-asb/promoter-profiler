@@ -25,7 +25,6 @@ interface FormData {
   email: string
   phone: string
   location: string
-  availability: string
   ageVerified: boolean
   productComfort: string
   previousExperience: string
@@ -45,7 +44,6 @@ const initialFormData: FormData = {
   email: '',
   phone: '',
   location: '',
-  availability: '',
   ageVerified: false,
   productComfort: '',
   previousExperience: '',
@@ -83,7 +81,10 @@ export function MultiStepForm() {
   }
 
   const updateAudioBlob = (questionNumber: number, blob: Blob | null) => {
-    setAudioBlobs({ ...audioBlobs, [`question${questionNumber}`]: blob })
+    console.log(`updateAudioBlob called for question${questionNumber}, blob:`, blob ? `${blob.size} bytes` : 'null')
+    const newBlobs = { ...audioBlobs, [`question${questionNumber}`]: blob }
+    console.log('Updated audioBlobs state:', Object.keys(newBlobs))
+    setAudioBlobs(newBlobs)
   }
 
   const nextStep = () => {
@@ -109,7 +110,7 @@ export function MultiStepForm() {
     switch (step) {
       case 1:
         return !!(formData.fullName && formData.email && formData.phone && 
-                  formData.location && formData.availability && formData.ageVerified)
+                  formData.location && formData.ageVerified)
       case 2: return !!(formData.question1 && audioBlobs.question1)
       case 3: return !!(formData.question2 && audioBlobs.question2)
       case 4: return !!(formData.question3 && audioBlobs.question3)
@@ -157,10 +158,13 @@ export function MultiStepForm() {
       const result = await submitCandidateForm(formDataToSubmit)
 
       if (result.success && result.candidateId) {
-        console.log('Form submitted successfully, uploading audio...')
+        console.log('Form submitted successfully, candidateId:', result.candidateId)
+        console.log('Audio blobs to upload:', Object.keys(audioBlobs))
+        console.log('Audio blob details:', Object.entries(audioBlobs).map(([k, v]) => `${k}: ${v ? 'exists' : 'null'}`))
         
         // Upload audio files directly to Supabase storage from client
         if (Object.keys(audioBlobs).length > 0) {
+          console.log('Starting audio upload...')
           try {
             const supabase = createClient()
             const audioUrls: { [key: string]: string } = {}
@@ -330,24 +334,6 @@ export function MultiStepForm() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="availability">When can you work? *</Label>
-                    <Select
-                      value={formData.availability}
-                      onValueChange={(value) => updateField('availability', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose your availability" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full-time">Full-time</SelectItem>
-                        <SelectItem value="part-time">Part-time</SelectItem>
-                        <SelectItem value="weekends">Weekends only</SelectItem>
-                        <SelectItem value="flexible">Flexible</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="ageVerified"
@@ -422,7 +408,6 @@ export function MultiStepForm() {
                       <p><strong>Email:</strong> {formData.email}</p>
                       <p><strong>Phone:</strong> {formData.phone}</p>
                       <p><strong>Location:</strong> {formData.location}</p>
-                      <p><strong>Availability:</strong> {formData.availability}</p>
                     </div>
                     <Button
                       variant="link"

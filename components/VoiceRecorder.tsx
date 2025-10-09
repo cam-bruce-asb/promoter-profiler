@@ -106,9 +106,14 @@ export function VoiceRecorder({ onTranscriptionComplete, onAudioRecorded, onAuto
         setAudioURL(url)
         setCurrentAudioBlob(audioBlob)
         
+        console.log(`Audio recorded for question ${questionNumber}, size: ${audioBlob.size} bytes`)
+        
         // Notify parent component about the audio recording
         if (onAudioRecorded) {
+          console.log(`Calling onAudioRecorded for question ${questionNumber}`)
           onAudioRecorded(audioBlob)
+        } else {
+          console.warn('onAudioRecorded callback not provided!')
         }
         
         // Stop all tracks

@@ -6,15 +6,18 @@ import { analyzeAudioTone, type AudioToneAnalysis } from './analyze-audio-tone'
 
 export async function submitCandidateForm(formData: FormData) {
   try {
+    console.log('Starting form submission...')
+    
     // Extract form data
     const fullName = formData.get('fullName') as string
     const email = formData.get('email') as string
     const phone = formData.get('phone') as string
     const location = formData.get('location') as string
-    const availability = formData.get('availability') as string
     const ageVerified = formData.get('ageVerified') === 'on'
     const productComfort = formData.get('productComfort') as string
     const previousExperience = formData.get('previousExperience') as string
+
+    console.log('Form data extracted:', { fullName, email, phone, location, ageVerified })
 
     // Extract question responses
     const responses = {
@@ -27,19 +30,29 @@ export async function submitCandidateForm(formData: FormData) {
       question7: formData.get('question7') as string,
     }
 
+    console.log('Responses extracted')
+
     // Validate required fields
-    if (!fullName || !email || !phone || !location || !availability || !ageVerified) {
+    if (!fullName || !email || !phone || !location || !ageVerified) {
+      console.log('Validation failed: missing required fields')
       return { success: false, error: 'Please fill in all required fields' }
     }
 
     if (!responses.question1 || !responses.question2 || !responses.question3 ||
         !responses.question4 || !responses.question5 || !responses.question6 ||
         !responses.question7) {
+      console.log('Validation failed: missing question responses')
       return { success: false, error: 'Please answer all questions' }
     }
 
+    console.log('Validation passed, creating Supabase client...')
+
     // Create Supabase admin client
     const supabase = await createAdminClient()
+    
+    console.log('Supabase client created')
+
+    console.log('Inserting candidate into database...')
 
     // Insert candidate into database
     const { data: candidate, error: candidateError } = await supabase
@@ -49,7 +62,6 @@ export async function submitCandidateForm(formData: FormData) {
         email,
         phone,
         location,
-        availability,
         age_verified: ageVerified,
         product_comfort: productComfort || null,
         previous_experience: previousExperience || null,
@@ -63,15 +75,19 @@ export async function submitCandidateForm(formData: FormData) {
       return { success: false, error: 'Failed to save your application. Please try again.' }
     }
 
+    console.log('Candidate inserted successfully:', candidate.id)
+
     // Trigger AI analysis asynchronously (don't wait for it)
     analyzeAndStore(candidate.id, fullName, responses).catch((error) => {
       console.error('Error in background analysis:', error)
     })
 
+    console.log('Returning success response')
     return { success: true, candidateId: candidate.id }
   } catch (error) {
     console.error('Error submitting form:', error)
-    return { success: false, error: 'An unexpected error occurred. Please try again.' }
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+    return { success: false, error: errorMessage }
   }
 }
 
