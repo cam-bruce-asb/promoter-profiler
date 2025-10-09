@@ -76,6 +76,7 @@ export async function submitCandidateForm(formData: FormData) {
     // Trigger AI analysis asynchronously (don't wait for it)
     analyzeAndStore(candidate.id, fullName, responses).catch((error) => {
       console.error('Error in background analysis:', error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
     })
 
     console.log('Returning success response')
@@ -94,10 +95,15 @@ async function analyzeAndStore(
   responses: any
 ) {
   try {
+    console.log(`Starting AI analysis for candidate ${candidateId}`)
+    
     // First, do basic text analysis without audio (fast)
+    console.log('Calling analyzeCandidate...')
     const analysis = await analyzeCandidate(candidateName, responses)
+    console.log('Analysis completed:', analysis.overallScore)
     
     const supabase = await createAdminClient()
+    console.log('Supabase client created for analysis storage')
     
     const { error: analysisError } = await supabase
       .from('analyses')
@@ -108,7 +114,7 @@ async function analyzeAndStore(
         strengths: analysis.strengths,
         red_flags: analysis.redFlags,
         recommendation: analysis.recommendation,
-        interview_focus: analysis.interviewFocus,
+        problem_areas: analysis.problemAreas,
         raw_ai_response: analysis.rawResponse,
       })
 
@@ -117,11 +123,12 @@ async function analyzeAndStore(
       throw analysisError
     }
 
-    console.log(`Successfully analyzed candidate ${candidateId}`)
+    console.log(`Successfully analyzed and stored analysis for candidate ${candidateId}`)
     // Audio analysis will be triggered via API route from client
     
   } catch (error) {
     console.error('Failed to analyze candidate:', error)
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
     // Don't throw - we don't want to fail the form submission
   }
 }

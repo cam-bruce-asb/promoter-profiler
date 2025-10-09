@@ -27,7 +27,7 @@ export interface AnalysisResult {
   strengths: string[]
   redFlags: string[]
   recommendation: 'Hire' | 'Maybe' | 'No-Hire'
-  interviewFocus: string[]
+  problemAreas: string[]
   rawResponse: string
 }
 
@@ -55,7 +55,7 @@ ${responses.question1}
 Question 2 - "Imagine a customer says no to your product. How would you feel and what would you do?":
 ${responses.question2}
 
-Question 3 - "What makes you want to work as a promoter? What excites you about it?":
+Question 3 - "Why do you want to work? What motivates you?":
 ${responses.question3}
 
 Question 4 - "Tell us about a time you had to solve a problem without help. What happened?":
@@ -104,7 +104,7 @@ PROVIDE YOUR ANALYSIS IN THE FOLLOWING JSON FORMAT (respond ONLY with valid JSON
   "strengths": [<array of 3-5 specific strength points>],
   "redFlags": [<array of potential concerns, or empty array if none>],
   "recommendation": "<Hire|Maybe|No-Hire>",
-  "interviewFocus": [<array of 2-4 areas to explore in interview>],
+  "problemAreas": [<array of 2-4 specific areas where the candidate could improve or potential weaknesses>],
   "reasoning": "<brief paragraph explaining the overall assessment>"
 }
 
@@ -150,7 +150,7 @@ KEY EVALUATION CRITERIA:
       strengths: parsed.strengths,
       redFlags: parsed.redFlags || [],
       recommendation: parsed.recommendation,
-      interviewFocus: parsed.interviewFocus,
+      problemAreas: parsed.problemAreas,
       rawResponse: responseText,
     }
   } catch (error) {

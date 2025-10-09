@@ -17,7 +17,8 @@ import { VoiceRecorder } from '@/components/VoiceRecorder'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { submitCandidateForm } from '@/app/actions/submit-form'
 import { createClient } from '@/lib/supabase/client'
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Check, User } from 'lucide-react'
+import Link from 'next/link'
 
 interface FormData {
   // Step 1 - Basic Info (simplified)
@@ -51,7 +52,7 @@ const initialFormData: FormData = {
 const questions = [
   "Tell us about a time you helped someone choose a product. What did you do?",
   "Imagine a customer says no to your product. How would you feel and what would you do?",
-  "What makes you want to work as a promoter? What excites you about it?",
+  "Why do you want to work? What motivates you?",
   "Tell us about a time you had to solve a problem without help. What happened?",
   "How do you get along with people? Give us an example.",
   "What would you do if you had a bad day but still had to work?",
@@ -247,6 +248,16 @@ export function MultiStepForm() {
   return (
     <div className="min-h-screen bg-stone-50 py-8 px-4">
       <div className="max-w-3xl mx-auto">
+        {/* Admin Login Button */}
+        <div className="flex justify-end mb-6">
+          <Link href="/admin/login">
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Admin Login
+            </Button>
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-stone-900 mb-3">

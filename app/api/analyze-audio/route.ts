@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const questions = [
       "Tell us about a time you helped someone choose a product. What did you do?",
       "Imagine a customer says no to your product. How would you feel and what would you do?",
-      "What makes you want to work as a promoter? What excites you about it?",
+      "Why do you want to work? What motivates you?",
       "Tell us about a time you had to solve a problem without help. What happened?",
       "How do you get along with people? Give us an example.",
       "What would you do if you had a bad day but still had to work?",

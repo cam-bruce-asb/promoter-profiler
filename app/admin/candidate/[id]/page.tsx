@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeft } from 'lucide-react'
 import { ReanalyzeAudioButton } from '@/components/ReanalyzeAudioButton'
 import { SyncAudioButton } from '@/components/SyncAudioButton'
+import { TriggerAnalysisButton } from '@/components/TriggerAnalysisButton'
+import { DeleteCandidateButton } from '@/components/DeleteCandidateButton'
 
 interface CandidateDetailProps {
   params: Promise<{ id: string }>
@@ -57,7 +59,7 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
   const questions = [
     { key: 'question1', text: 'Tell us about a time you helped someone choose a product. What did you do?' },
     { key: 'question2', text: 'Imagine a customer says no to your product. How would you feel and what would you do?' },
-    { key: 'question3', text: 'What makes you want to work as a promoter? What excites you about it?' },
+    { key: 'question3', text: 'Why do you want to work? What motivates you?' },
     { key: 'question4', text: 'Tell us about a time you had to solve a problem without help. What happened?' },
     { key: 'question5', text: 'How do you get along with people? Give us an example.' },
     { key: 'question6', text: 'What would you do if you had a bad day but still had to work?' },
@@ -118,7 +120,7 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
                 </Badge>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <SyncAudioButton candidateId={candidate.id} />
               {candidate.audio_urls && (
                 <ReanalyzeAudioButton 
@@ -126,6 +128,10 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
                   hasAudioUrls={!!candidate.audio_urls}
                 />
               )}
+              <DeleteCandidateButton 
+                candidateId={candidate.id}
+                candidateName={candidate.full_name}
+              />
             </div>
           </div>
 
@@ -217,15 +223,15 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
                   </div>
                 )}
 
-                {/* Interview Focus */}
-                {analysis.interview_focus && analysis.interview_focus.length > 0 && (
+                {/* Problem Areas */}
+                {analysis.problem_areas && analysis.problem_areas.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-lg mb-3">Interview Focus Areas</h3>
+                    <h3 className="font-semibold text-lg mb-3">Problem Areas</h3>
                     <ul className="space-y-2">
-                      {analysis.interview_focus.map((focus: string, index: number) => (
+                      {analysis.problem_areas.map((area: string, index: number) => (
                         <li key={index} className="flex items-start">
-                          <span className="text-stone-600 mr-2">→</span>
-                          <span>{focus}</span>
+                          <span className="text-red-600 mr-2">⚠</span>
+                          <span>{area}</span>
                         </li>
                       ))}
                     </ul>
@@ -296,7 +302,10 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
           ) : (
             <Card>
               <CardContent className="py-12 text-center">
-                <p className="text-stone-500">AI analysis in progress... Please refresh the page in a moment.</p>
+                <TriggerAnalysisButton 
+                  candidateId={candidate.id}
+                  candidateName={candidate.full_name}
+                />
               </CardContent>
             </Card>
           )}

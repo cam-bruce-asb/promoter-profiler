@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Search, X, Users } from 'lucide-react'
+import { DeleteCandidateButton } from '@/components/DeleteCandidateButton'
 
 interface Candidate {
   id: string
@@ -185,15 +186,21 @@ export function CandidateTable({ candidates }: CandidateTableProps) {
                         )}
                       </TableCell>
                       <TableCell className="py-4 px-6 text-center">
-                        <Link href={`/admin/candidate/${candidate.id}`}>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
-                          >
-                            View Details
-                          </Button>
-                        </Link>
+                        <div className="flex items-center justify-center gap-2">
+                          <Link href={`/admin/candidate/${candidate.id}`}>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+                            >
+                              View Details
+                            </Button>
+                          </Link>
+                          <DeleteCandidateButton 
+                            candidateId={candidate.id}
+                            candidateName={candidate.full_name}
+                          />
+                        </div>
                       </TableCell>
                     </TableRow>
                   )
