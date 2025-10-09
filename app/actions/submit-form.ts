@@ -12,12 +12,8 @@ export async function submitCandidateForm(formData: FormData) {
     const fullName = formData.get('fullName') as string
     const email = formData.get('email') as string
     const phone = formData.get('phone') as string
-    const location = formData.get('location') as string
-    const ageVerified = formData.get('ageVerified') === 'on'
-    const productComfort = formData.get('productComfort') as string
-    const previousExperience = formData.get('previousExperience') as string
 
-    console.log('Form data extracted:', { fullName, email, phone, location, ageVerified })
+    console.log('Form data extracted:', { fullName, email, phone })
 
     // Extract question responses
     const responses = {
@@ -33,7 +29,7 @@ export async function submitCandidateForm(formData: FormData) {
     console.log('Responses extracted')
 
     // Validate required fields
-    if (!fullName || !email || !phone || !location || !ageVerified) {
+    if (!fullName || !email || !phone) {
       console.log('Validation failed: missing required fields')
       return { success: false, error: 'Please fill in all required fields' }
     }
@@ -61,10 +57,10 @@ export async function submitCandidateForm(formData: FormData) {
         full_name: fullName,
         email,
         phone,
-        location,
-        age_verified: ageVerified,
-        product_comfort: productComfort || null,
-        previous_experience: previousExperience || null,
+        location: 'Not provided', // Default value since we removed location field
+        age_verified: true, // Default to true since we removed age verification
+        product_comfort: null,
+        previous_experience: null,
         responses,
       })
       .select()

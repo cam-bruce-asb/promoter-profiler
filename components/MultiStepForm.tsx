@@ -20,14 +20,10 @@ import { createClient } from '@/lib/supabase/client'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 
 interface FormData {
-  // Step 1 - Basic Info
+  // Step 1 - Basic Info (simplified)
   fullName: string
   email: string
   phone: string
-  location: string
-  ageVerified: boolean
-  productComfort: string
-  previousExperience: string
   
   // Steps 2-8 - Questions
   question1: string
@@ -43,10 +39,6 @@ const initialFormData: FormData = {
   fullName: '',
   email: '',
   phone: '',
-  location: '',
-  ageVerified: false,
-  productComfort: '',
-  previousExperience: '',
   question1: '',
   question2: '',
   question3: '',
@@ -109,8 +101,7 @@ export function MultiStepForm() {
   const canProceedFromStep = (step: number): boolean => {
     switch (step) {
       case 1:
-        return !!(formData.fullName && formData.email && formData.phone && 
-                  formData.location && formData.ageVerified)
+        return !!(formData.fullName && formData.email && formData.phone)
       case 2: return !!(formData.question1 && audioBlobs.question1)
       case 3: return !!(formData.question2 && audioBlobs.question2)
       case 4: return !!(formData.question3 && audioBlobs.question3)
@@ -323,48 +314,6 @@ export function MultiStepForm() {
                       placeholder="e.g., 073 123 4567"
                     />
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Where do you live? *</Label>
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => updateField('location', e.target.value)}
-                      placeholder="City or area"
-                    />
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="ageVerified"
-                      checked={formData.ageVerified}
-                      onCheckedChange={(checked) => updateField('ageVerified', checked as boolean)}
-                    />
-                    <Label htmlFor="ageVerified" className="text-sm font-normal cursor-pointer">
-                      I confirm I am 21 years or older *
-                    </Label>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="productComfort">
-                      How comfortable are you promoting alcohol products?
-                    </Label>
-                    <Select
-                      value={formData.productComfort}
-                      onValueChange={(value) => updateField('productComfort', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select comfort level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="very-comfortable">Very comfortable</SelectItem>
-                        <SelectItem value="comfortable">Comfortable</SelectItem>
-                        <SelectItem value="neutral">Neutral</SelectItem>
-                        <SelectItem value="somewhat-uncomfortable">Somewhat uncomfortable</SelectItem>
-                        <SelectItem value="uncomfortable">Uncomfortable</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
               </div>
             )}
@@ -407,7 +356,6 @@ export function MultiStepForm() {
                       <p><strong>Name:</strong> {formData.fullName}</p>
                       <p><strong>Email:</strong> {formData.email}</p>
                       <p><strong>Phone:</strong> {formData.phone}</p>
-                      <p><strong>Location:</strong> {formData.location}</p>
                     </div>
                     <Button
                       variant="link"
