@@ -236,7 +236,7 @@ export function MultiStepForm() {
             </div>
             <CardTitle className="text-3xl text-green-600">Thank You!</CardTitle>
             <CardDescription className="text-lg mt-4">
-              We've received your application. Our team will review your responses and get back to you soon.
+              We&apos;ve received your application. Our team will review your responses and get back to you soon.
             </CardDescription>
           </CardHeader>
         </Card>

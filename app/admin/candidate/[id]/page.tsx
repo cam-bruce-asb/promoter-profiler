@@ -114,7 +114,7 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
                 </Badge>
               ) : (
                 <Badge variant="outline" className="mt-2 bg-yellow-50 text-yellow-700 border-yellow-300">
-                  ⚠️ Audio Files Not Linked (Click "Sync & Analyze Audio")
+                  ⚠️ Audio Files Not Linked (Click &quot;Sync &amp; Analyze Audio&quot;)
                 </Badge>
               )}
             </div>
@@ -345,7 +345,7 @@ export default async function CandidateDetail({ params }: CandidateDetailProps) 
             <CardHeader>
               <CardTitle>Question Responses</CardTitle>
               <CardDescription>
-                The candidate's answers to the personality assessment questions
+                The candidate&apos;s answers to the personality assessment questions
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
